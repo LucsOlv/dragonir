@@ -1,0 +1,66 @@
+{{define "content"}}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Tasks</h1>
+        <div class="card">
+            <div class="card-body">
+                <form id="taskForm" class="mb-4">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Task</button>
+                </form>
+
+                <h3>Task List</h3>
+                <div id="taskList">
+                    {{range .Tasks}}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h5 class="card-title">{{.Title}}</h5>
+                            <p class="card-text">{{.Description}}</p>
+                            <span class="badge bg-info">{{.Status}}</span>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('taskForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const task = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        status: 'pending'
+    };
+
+    try {
+        const response = await fetch('/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(task)
+        });
+
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            alert('Error creating task');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error creating task');
+    }
+});
+</script>
+{{end}}
